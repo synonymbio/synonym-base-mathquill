@@ -553,6 +553,12 @@ function getInterface(v: number): MathQuill.v3.API | MathQuill.v1.API {
             if (element instanceof Element && element.classList.contains('mq-identifier')) {
               element.classList.add('mq-units');
             }
+          // Handle other unit symbols, like $ and %.
+          } else if (node instanceof VanillaSymbol || node instanceof NonSymbolaSymbol) {
+            const element = node.getDOM();
+            if (element instanceof Element) {
+              element.classList.add('mq-units');
+            }
           }
         });
       }

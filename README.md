@@ -1,6 +1,6 @@
 # [MathQuill](http://mathquill.com)
 
-## Synonym Developers
+## Roebling Developers
 
 ### Overview
 
@@ -14,7 +14,8 @@ Before exporting the build to `synonym-react-mathquill`, make sure to run `make 
 - Added the `_` character in `parser.util.ts`
 - Got rid of the special `mq-f` class
 - Commented out the `SubscriptCommand`
-- Added the `parseSemanticTypes` function in `publicapi.js`
+- Added the `parseSemanticTypes` function in `publicapi.ts`
+- Extended unit brace detection to support `VanillaSymbol` and `NonSymbolaSymbol` nodes (e.g `%`, `$`) inside `\left\{...\right\}`, not just `Letter` and `Digit`
 
 ---
 
