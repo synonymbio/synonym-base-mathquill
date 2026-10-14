@@ -16,6 +16,7 @@ Before exporting the build to `synonym-react-mathquill`, make sure to run `make 
 - Commented out the `SubscriptCommand`
 - Added the `parseSemanticTypes` function in `publicapi.ts`
 - Extended unit brace detection to support `VanillaSymbol` and `NonSymbolaSymbol` nodes (e.g `%`, `$`) inside `\left\{...\right\}`, not just `Letter` and `Digit`
+- A close bracket typed at the end of a fraction, exponent, or root closes the open bracket around it (`Bracket.matchEnclosingBrack`), so `(x/2)` no longer nests a new bracket in the denominator
 
 ---
 
