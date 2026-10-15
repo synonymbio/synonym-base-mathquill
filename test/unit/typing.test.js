@@ -365,6 +365,61 @@ suite('typing with auto-replaces', function () {
       });
     });
 
+    suite('closing a bracket from the end of a nested block', function () {
+      test('from a denominator (x/2)+1', function () {
+        mq.typedText('(x/2)+1');
+        assertLatex('\\left(\\frac{x}{2}\\right)+1');
+      });
+
+      test('from an exponent (x^2)+1', function () {
+        mq.typedText('(x^2)+1');
+        assertLatex('\\left(x^{2}\\right)+1');
+      });
+
+      test('from two levels deep {kg/m^3}', function () {
+        mq.typedText('0.93{kg/m^3}');
+        assertLatex('0.93\\left\\{\\frac{kg}{m^{3}}\\right\\}');
+      });
+
+      test('with restrictMismatchedBrackets', function () {
+        mq.config({ restrictMismatchedBrackets: true });
+        mq.typedText('{USD/lb}');
+        assertLatex('\\left\\{\\frac{USD}{lb}\\right\\}');
+      });
+
+      test('a mismatched bracket does not close it when restricted', function () {
+        mq.config({ restrictMismatchedBrackets: true });
+        mq.typedText('{x/2)');
+        assertLatex('\\left\\{\\frac{x}{\\left(2\\right)}\\right\\}');
+      });
+
+      test('not from the middle of a denominator', function () {
+        mq.typedText('(1/23');
+        mq.keystroke('Left').typedText(')');
+        assertLatex('\\left(\\frac{1}{\\left(2\\right)3}\\right)');
+      });
+
+      test('not over content after the fraction', function () {
+        mq.typedText('(a/b');
+        mq.keystroke('Right').typedText('c');
+        mq.keystroke('Left Left').typedText(')');
+        assertLatex('\\left(\\frac{a}{\\left(b\\right)}c\\right)');
+      });
+
+      test('not from a numerator', function () {
+        mq.typedText('(/1)');
+        assertLatex('\\left(\\frac{\\left(1\\right)}{ }\\right)');
+      });
+
+      test('not through another bracket ([a/b|])', function () {
+        mq.typedText('([a]');
+        mq.keystroke('Left').typedText('/b)');
+        assertLatex(
+          '\\left(\\left[\\frac{a}{\\left(b\\right)}\\right]\\right)'
+        );
+      });
+    });
+
     suite('mismatched brackets', function () {
       test('empty mismatched brackets (] and [}', function () {
         mq.typedText('(');

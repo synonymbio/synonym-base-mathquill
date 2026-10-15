@@ -1386,6 +1386,25 @@ class Bracket extends DelimsNode {
       .removeClass('mq-ghost');
     this.replaceBracket(brackFrag, this.side);
   }
+  /**
+   * A typed close bracket at the very end of a fraction, exponent or root
+   * (like `(x/2|`) closes the open bracket around it, as if the user had
+   * pressed Right until the caret reached that bracket's end. Stops at any
+   * other bracket, so `[a|]` inside `(` does not jump out of the `]`.
+   */
+  matchEnclosingBrack(opts: CursorOptions, cursor: Cursor) {
+    if (this.side !== R || cursor[R]) return undefined;
+    var block = cursor.parent;
+    var cmd = block.parent;
+    while (cmd instanceof MathCommand && !(cmd instanceof Bracket)) {
+      if (block !== cmd.getEnd(R) || cmd[R]) return undefined;
+      block = cmd.parent;
+      cmd = block.parent;
+      var brack = this.matchBrack(opts, L, cmd);
+      if (brack) return brack;
+    }
+    return undefined;
+  }
   createLeftOf(cursor: Cursor) {
     var brack;
     if (!this.replacedFragment) {
@@ -1410,6 +1429,7 @@ class Bracket extends DelimsNode {
             -this.side as BracketSide,
             cursor.parent.parent
           );
+        if (!brack) brack = this.matchEnclosingBrack(opts, cursor);
       }
     }
     if (brack) {
